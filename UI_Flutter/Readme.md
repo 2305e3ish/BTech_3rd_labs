@@ -3,23 +3,23 @@ CYCLE 1:
    
 	b) Write a simple Dart program to understand the language basics.
 
-3. a) Explore various Flutter widgets (Text, Image, Container, etc.).
+2. a) Explore various Flutter widgets (Text, Image, Container, etc.).
 
 	b) Implement different layout structures using Row, Column, and Stack widgets.
 
-4. a) Design a responsive UI that adapts to different screen sizes.
+3. a) Design a responsive UI that adapts to different screen sizes.
 
 	b) Implement media queries and breakpoints for responsiveness.
 
-5. a) Set up navigation between different screens using Navigator.
+4. a) Set up navigation between different screens using Navigator.
 	
  	b) Implement navigation with named routes.
 
-6. a) Design stateful and stateless widgets.
+5. a) Design stateful and stateless widgets.
 	
  	b) Implement state management using set State and Provider.
 
-7. a) Create custom widgets for UI elements.
+6. a) Create custom widgets for UI elements.
 
 	b) Apply styling using themes and custom styles.
 
