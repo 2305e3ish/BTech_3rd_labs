@@ -1,24 +1,43 @@
 CYCLE 1:
 1. a) Install Flutter and Dart SDK.
-b) Write a simple Dart program to understand the language basics.
-2. a) Explore various Flutter widgets (Text, Image, Container, etc.).
-b) Implement different layout structures using Row, Column, and Stack widgets.
-3. a) Design a responsive UI that adapts to different screen sizes.
-b) Implement media queries and breakpoints for responsiveness.
-4. a) Set up navigation between different screens using Navigator.
-b) Implement navigation with named routes.
-5. a) Design stateful and stateless widgets.
-b) Implement state management using set State and Provider.
-6. a) Create custom widgets for UI elements.
-b) Apply styling using themes and custom styles.
+   
+	b) Write a simple Dart program to understand the language basics.
+
+3. a) Explore various Flutter widgets (Text, Image, Container, etc.).
+
+	b) Implement different layout structures using Row, Column, and Stack widgets.
+
+4. a) Design a responsive UI that adapts to different screen sizes.
+
+	b) Implement media queries and breakpoints for responsiveness.
+
+5. a) Set up navigation between different screens using Navigator.
+	
+ 	b) Implement navigation with named routes.
+
+6. a) Design stateful and stateless widgets.
+	
+ 	b) Implement state management using set State and Provider.
+
+7. a) Create custom widgets for UI elements.
+
+	b) Apply styling using themes and custom styles.
 
 
 CYCLE 2:
+
 7. a) Design a form with various input fields.
-b) Implement form validation and error handling.
+
+   b) Implement form validation and error handling.
+
 8. a) Add animations to UI elements using Flutter animation framework.
-b) Experiment with different types of animations (fade, slide, etc.).
+
+   b) Experiment with different types of animations (fade, slide, etc.).
+
 9. a) Fetch data from a REST API.
-b) Display the fetched data in a meaningful way in the UI.
+
+   b) Display the fetched data in a meaningful way in the UI.
+
 10. a) Write unit tests for UI components.
-b) Use Flutter debugging tools to identify and fix issues.
+
+	b) Use Flutter debugging tools to identify and fix issues.
