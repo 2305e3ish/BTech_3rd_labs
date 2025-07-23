@@ -1,0 +1,24 @@
+Wireshark Usage Steps:
+
+1. Packet Capture Using Wireshark:
+   - Open Wireshark.
+   - Select the network interface to capture packets.
+   - Click 'Start' to begin capturing.
+
+2. Starting Wireshark:
+   - Launch Wireshark from your applications menu or terminal.
+
+3. Viewing Captured Traffic:
+   - Observe the live packet list.
+   - Click on any packet to view its details.
+
+4. Analysis and Statistics & Filters:
+   - Use the 'Statistics' menu for analysis (e.g., Protocol Hierarchy, Conversations).
+   - Apply filters in the top bar (e.g., tcp, udp, ip.addr == x.x.x.x).
+
+5. Nmap Usage Steps:
+   - Install Nmap: sudo apt-get install nmap
+   - Run a scan: nmap <target_ip>
+   - OS Detection: nmap -O <target_ip>
+
+Refer to your lab manual for more details and screenshots.

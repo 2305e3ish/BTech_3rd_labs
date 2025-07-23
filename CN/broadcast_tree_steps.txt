@@ -1,0 +1,15 @@
+Broadcast Tree for Subnet
+
+Steps:
+1. Draw the network graph with all hosts and routers.
+2. Choose a root node (usually the router).
+3. Use BFS (Breadth First Search) or DFS (Depth First Search) to traverse all nodes.
+4. Mark the shortest path from root to each host.
+5. The union of all shortest paths forms the broadcast tree.
+
+Example:
+- For a subnet with hosts A, B, C, D connected to router R:
+  - R connects to A, B, C, D directly.
+  - Broadcast tree: R-A, R-B, R-C, R-D
+
+Refer to your manual for a diagram.

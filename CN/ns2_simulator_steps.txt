@@ -1,0 +1,26 @@
+NS2 Simulator Steps
+
+1. Introduction:
+   - NS2 is a network simulator for simulating protocols and network scenarios.
+
+2. Simulate to Find Number of Packets Dropped:
+   - Write a TCL script to define nodes, links, and traffic.
+   - Run: ns example.tcl
+   - Use: awk '/^d/ {drop++} END {print drop}' out.tr
+
+3. Simulate to Find Packets Dropped by TCP/UDP:
+   - Filter trace file for TCP/UDP drops using awk or grep.
+
+4. Simulate to Find Packets Dropped due to Congestion:
+   - Analyze trace file for congestion events (look for 'd' events).
+
+5. Simulate to Compare Data Rate & Throughput:
+   - Calculate throughput from trace file: awk '{sum+=$5} END {print sum/time}' out.tr
+
+6. Simulate to Plot Congestion for Different Source/Destination:
+   - Use trace file data and plot using gnuplot or Excel.
+
+7. Simulate to Determine Performance for Transmission of Packets:
+   - Analyze trace file for sent/received packets.
+
+Refer to your manual for sample TCL scripts and trace file analysis.

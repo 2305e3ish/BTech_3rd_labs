@@ -1,0 +1,53 @@
+
+NS2 Node Simulation Steps:
+
+1. Open Terminal and Run NSG2:
+   - Launch your terminal.
+   - Run: java -jar nsg2.jar
+   - When NSG2 starts, choose "New Project" if prompted.
+
+2. Select Scenario:
+   - When asked, choose "Wired" or "Wireless" scenario depending on your experiment.
+   - For wired, select the default topology or use the menu to add nodes and links.
+
+3. Add Nodes:
+   - Use the menu or toolbar to add nodes:
+     - For a single node: select "Add Node" and click on the canvas.
+     - For multiple nodes: choose "Add Grid", "Add Horizontal", or "Add Vertical" from the options. 
+   - You can also use the TCL script editor to add nodes: set n0 [$ns node]
+
+4. Configure Lines Between Nodes:
+   - Select two nodes, then choose "Add Link" from the menu.
+   - In the link dialog, choose "Simplex" or "Duplex" as required.
+   - Set bandwidth and delay (e.g., 1Mb, 10ms).
+   - Example (TCL): $ns simplex-link $n0 $n1 1Mb 10ms DropTail
+
+5. Create Agents and Set Topology:
+   - Right-click a node and select "Add Agent".
+   - Choose "TCP" for most experiments. If you select TCP for one node, all communicating nodes should use TCP agents.
+   - In TCL script: set tcpAgent [new Agent/TCP]; $ns attach-agent $n0 $tcpAgent
+
+6. Connect Agents to Nodes:
+   - After adding agents, right-click the agent and select "Attach to Node".
+   - Or, in TCL: $ns attach-agent $node1 $tcpAgent
+
+7. Create Traffic Sources:
+   - Right-click the agent and select "Add Application" (e.g., FTP for TCP).
+   - In TCL: set ftp [new Application/FTP]; $ftp attach-agent $tcpAgent
+
+8. Set up Connections:
+   - Select the sender and receiver agents, then choose "Connect" from the menu.
+   - In TCL: $ns connect $tcpAgent $sinkAgent
+
+9. Schedule Events:
+   - Use the "Events" menu or TCL script to schedule start/stop times for traffic.
+   - Example (TCL): $ns at 0.5 "$ftp start"
+
+10. Run Simulation:
+    - Click "Run" in NSG2 or execute the TCL script with $ns run in the terminal.
+
+11. Analyze Output:
+    - After simulation, open the generated trace file.
+    - Use terminal commands like awk, grep, etc. to analyze packet transmission, drops, throughput.
+
+Refer to your manual for sample TCL scripts and trace file analysis.
