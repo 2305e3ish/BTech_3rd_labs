@@ -1,84 +1,82 @@
-// CRC Calculation for CRC-12, CRC-16, CRC-CCITT
-//
-// CRC-12: Polynomial = x^12 + x^11 + x^3 + x^2 + x + 1 (hex: 0x80F), poly_bits = 12
-// CRC-16: Polynomial = x^16 + x^15 + x^2 + 1 (hex: 0x8005), poly_bits = 16
-// CRC-CCITT: Polynomial = x^16 + x^12 + x^5 + 1 (hex: 0x1021), poly_bits = 16
-//
 #include <stdio.h>
 #include <string.h>
 
-// Calculates the CRC value for the given data using the specified polynomial.
-// Parameters:
-//   data      - input string to calculate CRC for
-//   poly      - CRC polynomial to use
-//   poly_bits - number of bits in the polynomial
-// Returns:
-//   The computed CRC value as an unsigned int.
-//
-// Manual logic: Usually uses bitwise division (modulo-2) on the entire bitstream, shifting and XORing with the polynomial when the MSB is 1.
-// This code: Processes each byte, aligns it to the CRC register, and for each bit, shifts and XORs with the polynomial if needed.
-// Both are correct; this version is efficient for short strings and easy to understand for beginners.
-// Calculates CRC for a string of '0' and '1' characters as bits
-unsigned int crc_bits(char *bitstr, unsigned int poly, int poly_bits) {
-    unsigned int reg = 0;
-    int len = strlen(bitstr);
-    for (int i = 0; i < len; i++) {
-        reg <<= 1;
-        if (bitstr[i] == '1')
-            reg |= 1;
-        if (reg & (1 << poly_bits)) // poly_bits+1-th bit
-            reg ^= poly;
+// Perform bitwise division (modulo-2) as in the manual
+unsigned int crc(const char *data, const char *type) {
+    unsigned int poly, width;
+    if (strcmp(type, "crc-12") == 0) {
+        poly = 0x80F; width = 12;
+    } else if (strcmp(type, "crc-16") == 0) {
+        poly = 0x11021; width = 17; // 17 bits for division (poly is x^16 + ...)
+    } else if (strcmp(type, "ccitt") == 0) {
+        poly = 0x11021; width = 17;
+    } else {
+        printf("Unknown CRC type.\n");
+        return 0;
     }
-    return reg & ((1U << poly_bits)-1);
-}
-unsigned int crc(char *data, unsigned int poly, int poly_bits) {
-    unsigned int reg = 0;
+
+    // Prepare the bit array (append width-1 zeros)
     int len = strlen(data);
-    for (int i = 0; i < len; i++) {
-        reg ^= (data[i] << (poly_bits-8)); // Align byte to MSB of register
-        for (int j = 0; j < 8; j++) {
-            if (reg & (1 << (poly_bits-1)))
-                reg = (reg << 1) ^ poly;
-            else
-                reg <<= 1;
+    int total = len + width - 1;
+    char bits[1024] = {0};
+    for (int i = 0; i < len; i++)
+        bits[i] = data[i] - '0';
+    for (int i = len; i < total; i++)
+        bits[i] = 0;
+
+    // Perform division
+    for (int i = 0; i <= total - width; i++) {
+        if (bits[i]) {
+            for (int j = 0; j < width; j++)
+                bits[i + j] ^= (poly >> (width - 1 - j)) & 1;
         }
     }
-    return reg & ((1U << poly_bits)-1);
+
+    // Collect remainder as CRC
+    unsigned int crc = 0;
+    for (int i = total - (width - 1); i < total; i++) {
+        crc = (crc << 1) | bits[i];
+    }
+    return crc;
+}
+
+void print_binary(unsigned int num, int width) {
+    for (int i = width - 1; i >= 0; i--)
+        printf("%d", (num >> i) & 1);
+    printf("\n");
 }
 
 int main() {
-    char data[100];
-    int choice, mode;
-    unsigned int checksum = 0;
-    printf("Enter data: ");
-    scanf("%s", data);
-    printf("Select CRC type:\n1. CRC-12\n2. CRC-16\n3. CRC-CCITT\nEnter choice: ");
-    scanf("%d", &choice);
-    printf("Choose input mode:\n1. ASCII (normal string)\n2. Bitwise (treat string as bits)\nEnter mode: ");
-    scanf("%d", &mode);
-    if (choice == 1) {
-        if (mode == 2)
-            checksum = crc_bits(data, 0x80F, 12);
-        else
-            checksum = crc(data, 0x80F, 12);
-        printf("CRC-12 checksum: %X\n", checksum);
-        printf("Data to send: %s%03X\n", data, checksum);
-    } else if (choice == 2) {
-        if (mode == 2)
-            checksum = crc_bits(data, 0x8005, 16);
-        else
-            checksum = crc(data, 0x8005, 16);
-        printf("CRC-16 checksum: %X\n", checksum);
-        printf("Data to send: %s%04X\n", data, checksum);
-    } else if (choice == 3) {
-        if (mode == 2)
-            checksum = crc_bits(data, 0x1021, 16);
-        else
-            checksum = crc(data, 0x1021, 16);
-        printf("CRC-CCITT checksum: %X\n", checksum);
-        printf("Data to send: %s%04X\n", data, checksum);
-    } else {
-        printf("Invalid choice.\n");
-    }
+    char tx[256], rx[256], type[16];
+    int width = 16;
+
+    printf("Enter transmitted data: ");
+    scanf("%s", tx);
+    printf("Enter received data: ");
+    scanf("%s", rx);
+    printf("Enter CRC type (crc-12, crc-16, ccitt): ");
+    scanf("%s", type);
+
+    if (strcmp(type, "crc-12") == 0) width = 12;
+    else width = 16;
+
+    unsigned int tx_crc = crc(tx, type);
+    unsigned int rx_crc = crc(rx, type);
+
+    printf("CRC is: ");
+    print_binary(tx_crc, width);
+
+    // To check correctness, append CRC to received data and check if remainder is zero
+    char rx_full[512];
+    strcpy(rx_full, rx);
+    for (int i = width - 1; i >= 0; i--)
+        rx_full[strlen(rx) + width - 1 - i] = ((tx_crc >> i) & 1) + '0';
+    rx_full[strlen(rx) + width - 1] = '\0';
+
+    unsigned int check = crc(rx_full, type);
+    if (check == 0)
+        printf("Data received right.\n");
+    else
+        printf("Data received wrong.\n");
     return 0;
 }

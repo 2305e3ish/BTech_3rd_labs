@@ -1,0 +1,101 @@
+# Go-Back-N Sliding Window Protocol: Explanation
+
+---
+
+## Problem Statement
+
+Develop a simple data link layer protocol that:
+- Performs **flow control** using the **sliding window protocol**.
+- Handles **loss recovery** using the **Go-Back-N** mechanism.
+
+---
+
+## Concepts to Know
+
+1. **Data Link Layer:**  
+   Responsible for reliable transmission of data frames between two nodes connected by a physical layer.
+
+2. **Flow Control:**  
+   Ensures that the sender does not overwhelm the receiver by sending too many frames at once.
+
+3. **Sliding Window Protocol:**  
+   - Allows the sender to send multiple frames before needing an acknowledgment.
+   - The "window size" determines how many frames can be sent without waiting for an ACK.
+
+4. **Go-Back-N ARQ (Automatic Repeat reQuest):**  
+   - If a frame is lost or an error is detected, the receiver discards that frame and all subsequent frames.
+   - The sender, upon timeout or negative acknowledgment, resends the lost frame and all subsequent frames in the window.
+
+5. **Acknowledgment (ACK):**  
+   - The receiver sends back the sequence number of the last correctly received frame.
+   - The sender slides the window forward based on the ACK received.
+
+---
+
+## Logic of the Program
+
+- The sender transmits frames up to the window size.
+- After sending, it waits for the user (simulating the receiver) to enter the last ACK received.
+- If the ACK is less than the last sent frame, the sender "goes back" and retransmits from the frame after the last ACK.
+- This process repeats until all frames are acknowledged.
+
+---
+
+## How the Program Solves the Problem
+
+- **Flow Control:**  
+  By limiting the number of frames sent at once to the window size.
+- **Loss Recovery (Go-Back-N):**  
+  If an ACK indicates a lost frame, the sender retransmits all frames from the lost frame onward.
+
+---
+
+## Working of the Code
+
+1. The user enters the window size (number of frames that can be sent before waiting for ACK).
+2. The sender transmits frames within the window and prints which frames are sent.
+3. The user enters the last ACK received (simulating the receiver's response).
+4. If the ACK is valid, the sender slides the window and continues.
+5. If the ACK is not valid, the sender asks for a valid ACK.
+6. The process repeats until all frames are acknowledged.
+
+---
+
+## Example Input/Output and Dry Run
+
+**Input/Output Example:**
+```
+Enter window size
+8
+Frame 0 has been transmitted.
+Frame 1 has been transmitted.
+Frame 2 has been transmitted.
+Frame 3 has been transmitted.
+Frame 4 has been transmitted.
+Frame 5 has been transmitted.
+Frame 6 has been transmitted.
+Frame 7 has been transmitted.
+Please enter the last Acknowledgement received.
+2
+Frame 2 has been transmitted.
+Frame 3 has been transmitted.
+Frame 4 has been transmitted.
+Frame 5 has been transmitted.
+Frame 6 has been transmitted.
+Frame 7 has been transmitted.
+Please enter the last Acknowledgement received.
+8
+```
+
+**Dry Run:**
+- Window size = 8, so frames 0 to 7 are sent.
+- User enters ACK = 2 (meaning frames 0, 1, 2 received; 3 onwards lost or not received).
+- Sender retransmits frames 2 to 7.
+- User enters ACK = 8 (all frames received).
+- Transmission is complete.
+
+---
+
+**Summary:**  
+This program demonstrates the Go-Back-N sliding window protocol for reliable data transfer, 
+handling both flow control and loss recovery as per the data link

@@ -1,24 +1,21 @@
-// Sliding Window and Go-Back-N
 #include <stdio.h>
-#define MAX 10
+#define MAX 100
 
 int main() {
-    int frames[MAX], n, window, i, ack = 0;
-    printf("Enter number of frames: ");
-    scanf("%d", &n);
-    printf("Enter window size: ");
+    int n, window, ack = -1, i = 0;
+    printf("Enter window size\n");
     scanf("%d", &window);
-    printf("Enter frame data: ");
-    for(i=0;i<n;i++) scanf("%d", &frames[i]);
-    i = 0;
+    n = window; // For your output format, number of frames = window size
     while(i < n) {
-        printf("Sending frames: ");
-        for(int j=i;j<i+window && j<n;j++) printf("%d ", frames[j]);
-        printf("\nEnter last ACK received (-1 for loss): ");
+        for(int j = i; j < i + window && j < n; j++)
+            printf("Frame %d has been transmitted.\n", j);
+        printf("Please enter the last Acknowledgement received.\n");
         scanf("%d", &ack);
-        if(ack == -1) printf("Resending window from %d\n", i);
-        else i = ack+1;
+        if(ack < i-1 || ack >= i + window) {
+            printf("Invalid ACK. Please enter a valid ACK in the current window.\n");
+            continue;
+        }
+        i = ack + 1;
     }
-    printf("All frames sent successfully.\n");
     return 0;
 }
