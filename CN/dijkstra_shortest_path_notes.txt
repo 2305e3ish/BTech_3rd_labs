@@ -1,0 +1,183 @@
+---
+Dijkstra’s Algorithm: Detailed General Explanation
+
+Dijkstra’s algorithm is a classic greedy algorithm for finding the shortest path from a source node to all other nodes in a weighted graph with non-negative edge weights. It is widely used in routing and navigation systems.
+
+Key Concepts:
+- The algorithm maintains a set of nodes whose shortest distance from the source is known and finalized.
+- At each step, it selects the unvisited node with the smallest known distance, then updates the distances to its neighbors if a shorter path is found through this node.
+- The process repeats until all nodes are finalized or no more reachable nodes remain.
+
+Step-by-Step:
+1. Initialize a distance array `dist[]` with infinity (INT_MAX), except for the source node (set to 0).
+2. Use a predecessor array `pred[]` to reconstruct paths later, initialized to -1.
+3. Use a visited array `vis[]` to track finalized nodes.
+4. For each iteration:
+   - Find the unvisited node with the smallest `dist[]` value.
+   - For each neighbor, if the path through this node is shorter, update `dist[]` and `pred[]`.
+   - Mark the node as visited.
+5. Repeat until all nodes are visited or unreachable.
+6. To get the shortest path to a destination, follow `pred[]` backwards from the destination to the source.
+
+---
+C++ Dijkstra’s Algorithm: Detailed Variable-by-Variable Explanation
+
+Variables:
+- n: Number of nodes in the graph. All other vectors and matrices depend on this value. It sets the scale for the problem and determines how many times the main loop will run.
+- c: Adjacency/cost matrix (vector<vector<int>>). This is a 2D grid where each cell c[i][j] holds the weight of the edge from node i to node j. If there is no direct edge, c[i][j] is set to INT_MAX, which acts as infinity and prevents the algorithm from considering non-existent edges. This matrix is the core representation of the graph.
+- dist: Vector of shortest known distances from the source node to every other node. Initially, all values are set to INT_MAX (infinity), except for the source node, which is set to 0. As the algorithm progresses, dist[i] is updated to reflect the shortest path found so far from the source to node i. This vector is used to decide which node to process next and to determine the final shortest path cost.
+- pred: Vector of predecessors for each node. For any node i, pred[i] stores the previous node on the shortest path from the source to i. This allows the algorithm to reconstruct the actual path taken once the shortest distances are finalized. If pred[i] is -1, it means either i is the source or no path has been found to i.
+- vis: Vector marking whether a node has been permanently processed (visited). vis[i] is 1 if node i's shortest distance is finalized and will not change further. This prevents the algorithm from revisiting nodes and ensures correctness.
+- s: Index of the source node (starting point). The algorithm begins from this node, setting dist[s] = 0 and pred[s] = -1.
+- d: Index of the destination node (end point). After the algorithm finishes, the shortest path and cost from s to d are reported.
+
+---
+Code Snippet Explanations (with Reasoning)
+
+
+Detailed Dry Run of a Sample Testcase
+
+Sample Input:
+```
+5
+0 10 3 -1 -1
+-1 0 1 2 -1
+-1 4 0 8 2
+-1 -1 -1 0 7
+-1 -1 -1 9 0
+0 4
+```
+(5 nodes, adjacency matrix, source=0, destination=4)
+
+Step 1: Initialization
+- dist = [0, 10, 3, INT_MAX, INT_MAX]
+- pred = [-1, 0, 0, -1, -1]
+- vis = [0, 0, 0, 0, 0]
+
+Step 2: First iteration
+- Pick node 0 (dist=0), mark visited.
+- For neighbors:
+  - Node 1: dist[1] = min(10, 0+10) = 10, pred[1]=0
+  - Node 2: dist[2] = min(3, 0+3) = 3, pred[2]=0
+
+Step 3: Second iteration
+- Pick node 2 (dist=3), mark visited.
+- For neighbors:
+  - Node 1: dist[1] = min(10, 3+4) = 7, pred[1]=2
+  - Node 3: dist[3] = min(INT_MAX, 3+8) = 11, pred[3]=2
+  - Node 4: dist[4] = min(INT_MAX, 3+2) = 5, pred[4]=2
+
+Step 4: Third iteration
+- Pick node 4 (dist=5), mark visited.
+- For neighbors:
+  - Node 3: dist[3] = min(11, 5+9) = 11 (no change, pred remains 2)
+
+Step 5: Fourth iteration
+- Pick node 1 (dist=7), mark visited.
+- For neighbors:
+  - Node 3: dist[3] = min(11, 7+2) = 9, pred[3]=1
+
+Step 6: Fifth iteration
+- Pick node 3 (dist=9), mark visited.
+- All neighbors already visited or no edge.
+
+Final dist: [0, 7, 3, 9, 5]
+Final pred: [-1, 2, 0, 1, 2]
+
+Path from 0 to 4:
+- pred[4]=2, pred[2]=0 → path: 0 → 2 → 4
+
+Output:
+Shortest path: 0 2 4
+Cost: 5
+
+---
+C++ Dijkstra’s Algorithm: Code Snippet and Expanded Explanation
+
+// Input and Setup
+```cpp
+cout << "Enter number of nodes: ";
+cin >> n;
+vector<vector<int>> c(n, vector<int>(n));
+cout << "Enter adjacency matrix (" << n << " x " << n << ", -1 for no edge):\n";
+for (int i = 0, w; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+        cin >> w;
+        c[i][j] = (i == j) ? 0 : (w == -1 ? INT_MAX : w);
+    }
+}
+```
+Expanded Explanation:
+- The program first asks for the number of nodes, which determines the size of the graph and all related data structures.
+- It then reads the adjacency matrix, which is a table of edge weights between every pair of nodes. The user enters -1 for no edge, which is converted to INT_MAX (a very large number representing infinity) so the algorithm will never use these as valid edges. The diagonal is set to 0, meaning there is no cost to stay at the same node.
+- This step sets up the graph in memory, ready for processing.
+
+// Source and Destination
+```cpp
+cout << "Enter source and destination (0-based indices): ";
+cin >> s >> d;
+```
+Expanded Explanation:
+- The user specifies the starting node (source) and the target node (destination) using 0-based indices. These values are used throughout the algorithm to initialize distances and reconstruct the final path.
+
+// Initialization
+```cpp
+vector<int> dist(n), pred(n), vis(n);
+for (int i = 0; i < n; i++) {
+    dist[i] = c[s][i];
+    pred[i] = (dist[i] < INT_MAX && i != s) ? s : -1;
+    vis[i] = 0;
+}
+dist[s] = 0; vis[s] = 1; pred[s] = -1;
+```
+Expanded Explanation:
+- Three vectors are created:
+  - `dist` holds the shortest known distance from the source to each node. It is initialized to the direct edge cost from the source to every node, so if there is a direct edge, the cost is set; otherwise, it remains INT_MAX.
+  - `pred` records the predecessor of each node on the shortest path. If there is a direct edge from the source, the predecessor is set to the source; otherwise, it’s -1, meaning no known predecessor yet.
+  - `vis` marks whether a node has been permanently processed (visited). All nodes start as unvisited (0).
+- The source node is set: its distance to itself is 0, it is marked as visited, and its predecessor is -1 (no predecessor).
+- This setup ensures the algorithm starts with the correct initial state, ready to expand paths from the source.
+
+// Main Dijkstra Loop
+```cpp
+for (int k = 1; k < n; k++) {
+    int v = -1, min = INT_MAX;
+    for (int i = 0; i < n; i++)
+        if (!vis[i] && dist[i] < min) { min = dist[i]; v = i; }
+    if (v == -1) break;
+    vis[v] = 1;
+    for (int i = 0; i < n; i++) {
+        if (!vis[i] && c[v][i] < INT_MAX) {
+            int alt = dist[v] + c[v][i];
+            if (alt < dist[i]) { dist[i] = alt; pred[i] = v; }
+        }
+    }
+}
+```
+Expanded Explanation:
+- The main loop runs n-1 times, which is enough to finalize the shortest path to every node in the graph.
+- In each iteration, the algorithm selects the unvisited node `v` with the smallest current distance from the source. This node is considered to have its shortest path finalized.
+- If no such node exists (all remaining nodes are unreachable), the loop breaks early.
+- The selected node `v` is marked as visited, so it will not be processed again.
+- For every other node `i`, if it is unvisited and there is an edge from `v` to `i`, the algorithm calculates an alternative path cost (`alt = dist[v] + c[v][i]`). If this alternative cost is less than the current known distance to `i`, the algorithm updates `dist[i]` and sets `pred[i] = v`, meaning the shortest path to `i` now goes through `v`.
+- This process is called "relaxation" and is the heart of Dijkstra’s algorithm. It ensures that the algorithm always keeps track of the best known way to reach each node from the source, updating paths as shorter routes are discovered.
+
+// Path Reconstruction and Output
+```cpp
+if (dist[d] >= INT_MAX) { cout << "No path\n"; return 0; }
+vector<int> stack;
+for (int cur = d; cur != -1; cur = pred[cur]) stack.push_back(cur);
+cout << "Shortest path: ";
+for (int i = stack.size() - 1; i >= 0; i--) {
+    if (n <= 26) cout << char('a' + stack[i]); else cout << stack[i];
+    if (i) cout << " ";
+}
+cout << "\nCost: " << dist[d] << "\n";
+```
+Expanded Explanation:
+- After the main loop, the algorithm checks if the destination node is reachable. If its distance is still INT_MAX, there is no path from the source, and the program prints "No path" and exits.
+- Otherwise, the algorithm reconstructs the shortest path by following the predecessor chain from the destination back to the source, pushing each node onto a stack.
+- The path is then printed in the correct order (from source to destination). If the graph is small (n <= 26), nodes are shown as letters (a, b, c, ...); otherwise, their indices are printed.
+- Finally, the total cost of the shortest path is printed.
+- This output step provides both the route and the cost, giving a complete answer to the shortest path problem.
+---
