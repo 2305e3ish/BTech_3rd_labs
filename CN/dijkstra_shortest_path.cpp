@@ -59,53 +59,46 @@ int main() {
 	for (int cur = d; cur != -1; cur = pred[cur]) stack[t++] = cur;
 
 */
+
 #include <iostream>
 #include <vector>
 #include <climits>
-	using namespace std;
+using namespace std;
 
-	int main() {
-		int n, s, d;
-		cout << "Enter number of nodes: ";
-		cin >> n;
-		vector<vector<int>> c(n, vector<int>(n));
-		cout << "Enter adjacency matrix (" << n << " x " << n << ", -1 for no edge):\n";
-		for (int i = 0, w; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				cin >> w;
-				c[i][j] = (i == j) ? 0 : (w == -1 ? INT_MAX : w);
-			}
+int main() {
+	int n, s, d;
+	cout << "Enter number of nodes: ";
+	cin >> n;
+	vector<vector<int>> c(n, vector<int>(n));
+	cout << "Enter adjacency matrix (" << n << " x " << n << ", -1 for no edge):\n";
+	for (int i = 0, w; i < n; i++)
+		for (int j = 0; j < n; j++) {
+			cin >> w;
+			c[i][j] = (i == j) ? 0 : (w == -1 ? INT_MAX : w);
 		}
-		cout << "Enter source and destination (0-based indices): ";
-		cin >> s >> d;
-		vector<int> dist(n), pred(n), vis(n);
-		for (int i = 0; i < n; i++) {
-			dist[i] = c[s][i];
-			pred[i] = (dist[i] < INT_MAX && i != s) ? s : -1;
-			vis[i] = 0;
-		}
-		dist[s] = 0; vis[s] = 1; pred[s] = -1;
-		for (int k = 1; k < n; k++) {
-			int v = -1, min = INT_MAX;
-			for (int i = 0; i < n; i++)
-				if (!vis[i] && dist[i] < min) { min = dist[i]; v = i; }
-			if (v == -1) break;
-			vis[v] = 1;
-			for (int i = 0; i < n; i++) {
-				if (!vis[i] && c[v][i] < INT_MAX) {
-					int alt = dist[v] + c[v][i];
-					if (alt < dist[i]) { dist[i] = alt; pred[i] = v; }
-				}
-			}
-		}
-		if (dist[d] >= INT_MAX) { cout << "No path\n"; return 0; }
-		vector<int> stack;
-		for (int cur = d; cur != -1; cur = pred[cur]) stack.push_back(cur);
-		cout << "Shortest path: ";
-		for (int i = stack.size() - 1; i >= 0; i--) {
-			if (n <= 26) cout << char('a' + stack[i]); else cout << stack[i];
-			if (i) cout << " ";
-		}
-		cout << "\nCost: " << dist[d] << "\n";
-		return 0;
+	cout << "Enter source and destination (0-based indices): ";
+	cin >> s >> d;
+	vector<int> dist = c[s], pred(n, -1), vis(n);
+	for (int i = 0; i < n; i++) if (dist[i] < INT_MAX && i != s) pred[i] = s;
+	dist[s] = 0; vis[s] = 1;
+	for (int k = 1; k < n; k++) {
+		int v = -1, min = INT_MAX;
+		for (int i = 0; i < n; i++)
+			if (!vis[i] && dist[i] < min) min = dist[i], v = i;
+		if (v == -1) break;
+		vis[v] = 1;
+		for (int i = 0; i < n; i++)
+			if (!vis[i] && c[v][i] < INT_MAX && dist[v] + c[v][i] < dist[i])
+				dist[i] = dist[v] + c[v][i], pred[i] = v;
 	}
+	if (dist[d] >= INT_MAX) { cout << "No path\n"; return 0; }
+	vector<int> path;
+	for (int cur = d; cur != -1; cur = pred[cur]) path.push_back(cur);
+	cout << "Shortest path: ";
+	for (int i = path.size() - 1; i >= 0; i--) {
+		cout << path[i];
+		if (i) cout << " ";
+	}
+	cout << "\nCost: " << dist[d] << "\n";
+	return 0;
+}
