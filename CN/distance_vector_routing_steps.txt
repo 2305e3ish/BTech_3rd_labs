@@ -1,0 +1,56 @@
+---
+
+DETAILED STEP-BY-STEP DRY RUN AND EXPLANATION: DISTANCE VECTOR ROUTING
+
+**Definitions and Basics:**
+- Distance Vector Routing is a dynamic routing algorithm used in computer networks.
+- Each node (router) maintains a table (vector) of the cost to reach every other node in the network.
+- The cost matrix represents the direct link cost between nodes. If there is no direct link, input -1. The code will convert -1 to INT_MAX (infinity) internally.
+- The algorithm finds the shortest path from every node to every other node by updating these tables iteratively, based on information from neighbors.
+- The process continues until no shorter paths are found.
+
+**Problem Statement:**
+Given a network (as a cost matrix) with nodes, find the shortest path cost from each node to every other node using the Distance Vector Routing algorithm. Print the routing table for each node.
+
+**Sample Input:**
+Enter number of nodes: 4
+Enter cost matrix (-1 for no edge):
+0 1 3 -1
+1 0 1 4
+3 1 0 2
+-1 4 2 0
+
+**Step 1: Build the Cost Matrix**
+The cost matrix is read for 4 nodes:
+- Node 0: [0, 1, 3, -1]
+- Node 1: [1, 0, 1, 4]
+- Node 2: [3, 1, 0, 2]
+- Node 3: [-1, 4, 2, 0]
+In the code, -1 is converted to INT_MAX (infinity) to represent no direct edge.
+
+**Step 2: Initialize Distance Table**
+- For each node, initialize its distance to all other nodes as per the cost matrix (with -1 replaced by INT_MAX).
+
+**Step 3: Distance Vector Algorithm (Floyd-Warshall style)**
+- For each intermediate node k:
+  - For each source node i:
+    - For each destination node j:
+      - If dist[i][k] != INT_MAX and dist[k][j] != INT_MAX and dist[i][j] > dist[i][k] + dist[k][j], update dist[i][j] = dist[i][k] + dist[k][j]
+- Repeat until no more updates are possible (all shortest paths found).
+
+**Step 4: Output the Routing Tables**
+For each node, print the shortest cost to every other node:
+Routing tables:
+Node 0: 0 1 2 4
+Node 1: 1 0 1 3
+Node 2: 2 1 0 2
+Node 3: 4 3 2 0
+(If a node is unreachable, the code prints INF for that entry.)
+
+**Step 5: Explanation of the Output**
+- Each entry in the routing table shows the minimum cost from the node to every other node.
+- The algorithm finds the shortest path by considering all possible intermediate nodes.
+- If a node is unreachable, the cost remains INF (infinity).
+
+**Summary:**
+The Distance Vector Routing algorithm allows each node to compute the shortest path to every other node by exchanging information with its neighbors. The dry run above shows how the cost matrix is updated step by step, and how the final routing tables are produced for efficient routing in a network. Using -1 for no edge in the input makes it user-friendly, and the code handles conversion to infinity internally.
